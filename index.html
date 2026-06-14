@@ -3,515 +3,384 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Garvan Stewart — Football Intelligence Dashboard</title>
+  <title>Garvan Stewart — Football Intelligence</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f5f5f3;
-      color: #1a1a1a;
+      background: #080808;
+      color: #e8e8e4;
       min-height: 100vh;
       padding: 2rem 1rem;
     }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-    }
+    .container { max-width: 740px; margin: 0 auto; }
 
     .header {
       display: flex;
       align-items: center;
-      gap: 16px;
-      margin-bottom: 2.5rem;
+      justify-content: space-between;
+      margin-bottom: 2rem;
       padding-bottom: 1.5rem;
-      border-bottom: 1px solid #e0e0d8;
+      border-bottom: 1px solid #1a1a1a;
     }
 
+    .header-left { display: flex; align-items: center; gap: 14px; }
+
     .avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
+      width: 44px; height: 44px; border-radius: 50%;
       background: #004C1C;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .5px;
       flex-shrink: 0;
     }
 
-    .header-text h1 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1a1a1a;
+    .header-name { font-size: 15px; font-weight: 500; color: #e8e8e4; }
+    .header-role { font-size: 12px; color: #555; margin-top: 2px; }
+
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #444;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #004C1C;
     }
 
-    .header-text p {
-      font-size: 13px;
-      color: #666;
-      margin-top: 3px;
+    .api-banner {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
     }
+    .api-banner i { font-size: 18px; color: #555; flex-shrink: 0; margin-top: 1px; }
+    .api-banner-text { flex: 1; }
+    .api-banner-text strong { font-size: 13px; font-weight: 500; color: #aaa; display: block; margin-bottom: 4px; }
+    .api-banner-text p { font-size: 12px; color: #555; line-height: 1.5; }
+    .api-banner-text a { color: #3a7bd5; text-decoration: none; }
+    .api-banner-text a:hover { text-decoration: underline; }
+
+    .api-row { display: flex; gap: 8px; margin-top: 10px; }
+    .api-row input {
+      flex: 1; padding: 8px 12px;
+      background: #0d0d0d; border: 1px solid #2a2a2a;
+      border-radius: 7px; font-size: 12px; color: #ccc;
+      font-family: monospace;
+      outline: none;
+    }
+    .api-row input:focus { border-color: #333; }
+    .api-row button {
+      padding: 8px 16px;
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      border-radius: 7px; font-size: 12px; font-weight: 500;
+      color: #aaa; cursor: pointer; white-space: nowrap;
+      transition: all .15s;
+    }
+    .api-row button:hover { background: #222; color: #ddd; }
+
+    .key-ok { font-size: 11px; color: #1a8f3c; margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+    .key-err { font-size: 11px; color: #a05050; margin-top: 6px; }
 
     .section {
-      background: #fff;
+      border: 1px solid #1a1a1a;
       border-radius: 12px;
-      border: 1px solid #e0e0d8;
-      margin-bottom: 1.5rem;
       overflow: hidden;
+      margin-bottom: 10px;
     }
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid #e0e0d8;
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 18px;
+      background: #0f0f0f;
       gap: 12px;
     }
 
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a1a1a;
-      flex-wrap: wrap;
-    }
+    .section-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-    .section-title i {
-      font-size: 18px;
+    .sec-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
     }
+    .icon-hibs  { background: rgba(0,76,28,.15);  color: #1a8f3c; }
+    .icon-uk    { background: rgba(26,58,110,.15); color: #3a7bd5; }
+    .icon-intl  { background: rgba(123,63,0,.15);  color: #d4813a; }
+    .icon-me    { background: rgba(75,45,128,.15);  color: #9b6dd4; }
 
-    .badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-weight: 600;
+    .section-title { font-size: 13px; font-weight: 500; color: #bbb; }
+
+    .pill {
+      font-size: 10px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; letter-spacing: .3px;
     }
-
-    .badge-hibs { background: #004C1C; color: #fff; }
-    .badge-career { background: #1A3A6E; color: #fff; }
-    .badge-intl { background: #7B3F00; color: #fff; }
-    .badge-me { background: #4B2D80; color: #fff; }
+    .pill-hibs { background: rgba(0,76,28,.2);   color: #1a8f3c; border: 1px solid rgba(0,76,28,.4); }
+    .pill-uk   { background: rgba(26,58,110,.2);  color: #3a7bd5; border: 1px solid rgba(26,58,110,.4); }
+    .pill-intl { background: rgba(123,63,0,.2);   color: #d4813a; border: 1px solid rgba(123,63,0,.4); }
+    .pill-me   { background: rgba(75,45,128,.2);   color: #9b6dd4; border: 1px solid rgba(75,45,128,.4); }
 
     .refresh-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      padding: 7px 14px;
-      border: 1px solid #d0d0c8;
-      border-radius: 8px;
-      background: #fff;
-      color: #555;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; padding: 6px 12px;
+      border: 1px solid #222; border-radius: 7px;
+      background: transparent; color: #555;
+      cursor: pointer; transition: all .15s; white-space: nowrap; flex-shrink: 0;
     }
-
-    .refresh-btn:hover { background: #f5f5f3; border-color: #bbb; }
-    .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .refresh-btn i { font-size: 14px; }
-
-    .feed-body { }
+    .refresh-btn:hover { background: #1a1a1a; color: #999; border-color: #2a2a2a; }
+    .refresh-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .refresh-btn i { font-size: 12px; }
 
     .feed-item {
-      padding: 14px 20px;
-      border-bottom: 1px solid #f0f0ea;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: background 0.1s;
+      padding: 13px 18px;
+      border-bottom: 1px solid #141414;
+      display: flex; flex-direction: column; gap: 5px;
+      transition: background .1s;
     }
-
     .feed-item:last-child { border-bottom: none; }
-    .feed-item:hover { background: #fafaf8; }
+    .feed-item:hover { background: #0c0c0c; }
 
     .feed-item a {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a1a1a;
-      text-decoration: none;
-      line-height: 1.4;
+      font-size: 13px; font-weight: 500;
+      color: #d0d0cc; text-decoration: none; line-height: 1.4;
     }
+    .feed-item a:hover { color: #fff; }
 
-    .feed-item a:hover { text-decoration: underline; color: #004C1C; }
-
-    .feed-summary {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-    }
+    .feed-summary { font-size: 12px; color: #4a4a4a; line-height: 1.5; }
 
     .feed-tags {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 2px;
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap; margin-top: 2px;
     }
 
-    .source-tag {
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: #f0f0ea;
-      border: 1px solid #e0e0d8;
-      color: #666;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .tag {
+      font-size: 10px; padding: 2px 7px; border-radius: 4px;
+      background: #111; border: 1px solid #1e1e1e;
+      color: #4a4a4a; display: inline-flex; align-items: center; gap: 3px;
     }
-
-    .country-tag {
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: #FFF8E7;
-      border: 1px solid #F0D080;
-      color: #7B5800;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .feed-date {
-      font-size: 11px;
-      color: #999;
+    .tag-country {
+      background: rgba(123,63,0,.1);
+      border-color: rgba(123,63,0,.25);
+      color: #8a5a20;
     }
 
     .empty-state {
-      padding: 3rem 1.5rem;
-      text-align: center;
-      color: #888;
-      font-size: 14px;
+      padding: 2.5rem 1.5rem; text-align: center;
+      color: #2a2a2a; font-size: 13px;
     }
-
-    .empty-state i {
-      font-size: 32px;
-      color: #ccc;
-      display: block;
-      margin-bottom: 12px;
-    }
+    .empty-state i { font-size: 26px; color: #1e1e1e; display: block; margin-bottom: 10px; }
 
     .loading-state {
-      padding: 3rem 1.5rem;
-      text-align: center;
-      color: #888;
-      font-size: 14px;
+      padding: 2.5rem 1.5rem; text-align: center;
+      color: #333; font-size: 12px;
     }
-
     .loading-state i {
-      font-size: 28px;
-      color: #bbb;
-      display: block;
-      margin-bottom: 12px;
-      animation: spin 1s linear infinite;
+      font-size: 22px; color: #2a2a2a; display: block;
+      margin-bottom: 10px; animation: spin 1s linear infinite;
     }
 
     .error-state {
-      padding: 1.25rem 20px;
-      background: #fff5f5;
-      border-top: 1px solid #fdd;
-      font-size: 13px;
-      color: #c0392b;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      padding: 12px 18px; background: #120808;
+      font-size: 12px; color: #7a3a3a;
+      display: flex; align-items: center; gap: 8px;
     }
 
     .section-footer {
-      padding: 8px 20px;
-      background: #fafaf8;
-      border-top: 1px solid #f0f0ea;
-      font-size: 11px;
-      color: #aaa;
-      text-align: right;
+      padding: 6px 18px; background: #0a0a0a;
+      border-top: 1px solid #141414;
+      font-size: 10px; color: #2a2a2a; text-align: right;
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .api-notice {
-      background: #fffbeb;
-      border: 1px solid #f0d080;
-      border-radius: 10px;
-      padding: 14px 18px;
-      margin-bottom: 1.5rem;
-      font-size: 13px;
-      color: #7B5800;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .api-notice i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-
-    .api-key-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .api-key-row input {
-      flex: 1;
-      padding: 7px 10px;
-      border: 1px solid #d0c080;
-      border-radius: 6px;
-      font-size: 13px;
-      background: #fff;
-      color: #333;
-      font-family: monospace;
-    }
-
-    .api-key-row button {
-      padding: 7px 14px;
-      background: #7B5800;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .api-key-row button:hover { background: #5a4000; }
-
-    .key-saved {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #2e7d32;
-      margin-top: 6px;
-    }
-
     @media (max-width: 500px) {
-      body { padding: 1rem 0.75rem; }
-      .section-header { flex-direction: column; align-items: flex-start; }
+      body { padding: 1rem .75rem; }
+      .section-head { flex-direction: column; align-items: flex-start; }
       .refresh-btn { align-self: flex-end; }
     }
   </style>
 </head>
 <body>
-
 <div class="container">
 
   <div class="header">
-    <div class="avatar">GS</div>
-    <div class="header-text">
-      <h1>Football Intelligence Dashboard</h1>
-      <p>Garvan Stewart &middot; Head of Recruitment &middot; Hibernian FC</p>
-    </div>
-  </div>
-
-  <div class="api-notice" id="api-notice">
-    <i class="ti ti-key"></i>
-    <div>
-      <strong>Anthropic API key required</strong> — this dashboard uses Claude to search the web. Paste your API key below to activate it. Get one free at <a href="https://console.anthropic.com" target="_blank" style="color:#7B5800;">console.anthropic.com</a>.
-      <div class="api-key-row">
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-        <button onclick="saveKey()">Save</button>
+    <div class="header-left">
+      <div class="avatar">GS</div>
+      <div>
+        <div class="header-name">Garvan Stewart</div>
+        <div class="header-role">Head of Recruitment &middot; Hibernian FC</div>
       </div>
-      <div id="key-status"></div>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div> Live intelligence</div>
+  </div>
+
+  <div class="api-banner" id="api-banner">
+    <i class="ti ti-key"></i>
+    <div class="api-banner-text">
+      <strong>Anthropic API key required</strong>
+      <p>This dashboard uses Claude to search the web in real time. Enter your API key to activate it. Get one at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> — a $5 top-up lasts months at this usage level.</p>
+      <div class="api-row">
+        <input type="password" id="api-input" placeholder="sk-ant-..." />
+        <button onclick="saveKey()">Save key</button>
+      </div>
+      <div id="key-msg"></div>
     </div>
   </div>
 
-  <!-- SECTION 1: Hibernian -->
   <div class="section">
-    <div class="section-header">
-      <div class="section-title">
-        <i class="ti ti-shirt-sport" style="color:#004C1C;"></i>
-        Hibernian FC — Recruitment news
-        <span class="badge badge-hibs">Hibs</span>
+    <div class="section-head">
+      <div class="section-left">
+        <div class="sec-icon icon-hibs"><i class="ti ti-shirt-sport" aria-hidden="true"></i></div>
+        <span class="section-title">Hibernian FC — Recruitment</span>
+        <span class="pill pill-hibs">Hibs</span>
       </div>
       <button class="refresh-btn" id="btn-hibs" onclick="fetchSection('hibs')">
         <i class="ti ti-refresh"></i> Refresh
       </button>
     </div>
-    <div class="feed-body" id="feed-hibs">
-      <div class="empty-state">
-        <i class="ti ti-news"></i>
-        Press Refresh to load the latest Hibernian recruitment news
-      </div>
+    <div id="feed-hibs">
+      <div class="empty-state"><i class="ti ti-news" aria-hidden="true"></i>Press refresh to load the latest Hibernian recruitment news</div>
     </div>
-    <div class="section-footer" id="updated-hibs"></div>
+    <div class="section-footer" id="up-hibs"></div>
   </div>
 
-  <!-- SECTION 2: UK Career -->
   <div class="section">
-    <div class="section-header">
-      <div class="section-title">
-        <i class="ti ti-briefcase" style="color:#1A3A6E;"></i>
-        Career opportunities — UK &amp; Scotland
-        <span class="badge badge-career">UK / SPL</span>
+    <div class="section-head">
+      <div class="section-left">
+        <div class="sec-icon icon-uk"><i class="ti ti-briefcase" aria-hidden="true"></i></div>
+        <span class="section-title">Career opportunities — UK &amp; Scotland</span>
+        <span class="pill pill-uk">UK / SPL</span>
       </div>
       <button class="refresh-btn" id="btn-career" onclick="fetchSection('career')">
         <i class="ti ti-refresh"></i> Refresh
       </button>
     </div>
-    <div class="feed-body" id="feed-career">
-      <div class="empty-state">
-        <i class="ti ti-target"></i>
-        Press Refresh to load Director of Football vacancies and executive changes
-      </div>
+    <div id="feed-career">
+      <div class="empty-state"><i class="ti ti-target" aria-hidden="true"></i>Press refresh to load Director of Football vacancies and executive changes</div>
     </div>
-    <div class="section-footer" id="updated-career"></div>
+    <div class="section-footer" id="up-career"></div>
   </div>
 
-  <!-- SECTION 3: International Career -->
   <div class="section">
-    <div class="section-header">
-      <div class="section-title">
-        <i class="ti ti-world" style="color:#7B3F00;"></i>
-        Career opportunities — International
-        <span class="badge badge-intl">Global</span>
+    <div class="section-head">
+      <div class="section-left">
+        <div class="sec-icon icon-intl"><i class="ti ti-world" aria-hidden="true"></i></div>
+        <span class="section-title">Career opportunities — International</span>
+        <span class="pill pill-intl">Global</span>
       </div>
       <button class="refresh-btn" id="btn-intl" onclick="fetchSection('intl')">
         <i class="ti ti-refresh"></i> Refresh
       </button>
     </div>
-    <div class="feed-body" id="feed-intl">
-      <div class="empty-state">
-        <i class="ti ti-plane"></i>
-        Press Refresh to load international Director of Football opportunities
-      </div>
+    <div id="feed-intl">
+      <div class="empty-state"><i class="ti ti-plane" aria-hidden="true"></i>Press refresh to load international Director of Football opportunities</div>
     </div>
-    <div class="section-footer" id="updated-intl"></div>
+    <div class="section-footer" id="up-intl"></div>
   </div>
 
-  <!-- SECTION 4: My Mentions -->
   <div class="section">
-    <div class="section-header">
-      <div class="section-title">
-        <i class="ti ti-user-circle" style="color:#4B2D80;"></i>
-        Mentions — Garvan Stewart
-        <span class="badge badge-me">My name</span>
+    <div class="section-head">
+      <div class="section-left">
+        <div class="sec-icon icon-me"><i class="ti ti-user-circle" aria-hidden="true"></i></div>
+        <span class="section-title">Mentions — Garvan Stewart</span>
+        <span class="pill pill-me">My name</span>
       </div>
       <button class="refresh-btn" id="btn-me" onclick="fetchSection('me')">
         <i class="ti ti-refresh"></i> Refresh
       </button>
     </div>
-    <div class="feed-body" id="feed-me">
-      <div class="empty-state">
-        <i class="ti ti-user-search"></i>
-        Press Refresh to search for mentions of your name online
-      </div>
+    <div id="feed-me">
+      <div class="empty-state"><i class="ti ti-user-search" aria-hidden="true"></i>Press refresh to search for mentions of your name online</div>
     </div>
-    <div class="section-footer" id="updated-me"></div>
+    <div class="section-footer" id="up-me"></div>
   </div>
 
 </div>
-
 <script>
   const SECTIONS = {
     hibs: {
-      btn: 'btn-hibs',
-      feed: 'feed-hibs',
-      updated: 'updated-hibs',
       showCountry: false,
       prompt: "Search the web for the very latest news (last 60 days) about Hibernian FC recruitment, transfers, scouting, or player signings. Also include any news about the Hibernian head of recruitment or their scouting department. Return results as a JSON array."
     },
     career: {
-      btn: 'btn-career',
-      feed: 'feed-career',
-      updated: 'updated-career',
       showCountry: false,
       prompt: "Search the web for very recent news (last 90 days) about: Director of Football roles being vacated, sacked, or advertised at clubs in the English Championship, League One, League Two, English Premier League, or Scottish Premiership. Also include Head of Recruitment departures or vacancies at those clubs. Include any club restructuring or executive changes in football operations roles. Return results as a JSON array."
     },
     intl: {
-      btn: 'btn-intl',
-      feed: 'feed-intl',
-      updated: 'updated-intl',
       showCountry: true,
-      prompt: "Search the web for recent news (last 90 days) about Director of Football, Sporting Director, Head of Recruitment, or Technical Director roles being vacated, sacked, or advertised at football clubs OUTSIDE the UK — this includes clubs in Europe (Bundesliga, Ligue 1, Serie A, La Liga, Eredivisie, MLS), Saudi Arabia (Saudi Pro League), the United States (MLS), Australia (A-League), Middle East, or anywhere else in the world. Include executive departures, restructuring, or newly created roles at international clubs. Include the country or league in the 'country' field. Return results as a JSON array."
+      prompt: "Search the web for recent news (last 90 days) about Director of Football, Sporting Director, Head of Recruitment, or Technical Director roles being vacated, sacked, or advertised at football clubs OUTSIDE the UK — Europe, Saudi Arabia, USA, Australia, Middle East or anywhere worldwide. Include the country or league in the 'country' field. Return results as a JSON array."
     },
     me: {
-      btn: 'btn-me',
-      feed: 'feed-me',
-      updated: 'updated-me',
       showCountry: false,
-      prompt: "Search the web for any mentions of 'Garvan Stewart' — include articles, interviews, social media mentions, news pieces, or any online content that references this person. Garvan Stewart is Head of Recruitment at Hibernian Football Club in Scotland. Return all relevant results as a JSON array."
+      prompt: "Search the web for any mentions of 'Garvan Stewart' — articles, interviews, social media mentions, news pieces, or any online content referencing this person. Garvan Stewart is Head of Recruitment at Hibernian Football Club in Scotland. Return all relevant results as a JSON array."
     }
   };
 
-  let apiKey = localStorage.getItem('gs_api_key') || '';
-
-  function saveKey() {
-    const input = document.getElementById('api-key-input').value.trim();
-    if (!input.startsWith('sk-ant-')) {
-      document.getElementById('key-status').innerHTML = '<span style="color:#c0392b;font-size:12px;"><i class="ti ti-alert-circle"></i> That doesn\'t look like a valid Anthropic API key.</span>';
-      return;
-    }
-    apiKey = input;
-    localStorage.setItem('gs_api_key', apiKey);
-    document.getElementById('api-notice').style.display = 'none';
-    document.getElementById('key-status').innerHTML = '';
-  }
+  let apiKey = localStorage.getItem('gs_dash_key') || '';
 
   function checkKey() {
     if (apiKey && apiKey.startsWith('sk-ant-')) {
-      document.getElementById('api-notice').style.display = 'none';
+      document.getElementById('api-banner').style.display = 'none';
     }
   }
 
-  function setLoading(sectionKey) {
-    const s = SECTIONS[sectionKey];
-    document.getElementById(s.feed).innerHTML = '<div class="loading-state"><i class="ti ti-loader-2"></i>Searching the web for latest results…</div>';
-    const btn = document.getElementById(s.btn);
-    btn.disabled = true;
-    btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite;font-size:14px;"></i> Loading…';
-  }
-
-  function setDone(sectionKey) {
-    const s = SECTIONS[sectionKey];
-    const btn = document.getElementById(s.btn);
-    btn.disabled = false;
-    btn.innerHTML = '<i class="ti ti-refresh"></i> Refresh';
-    document.getElementById(s.updated).textContent = 'Last updated: ' + new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-  }
-
-  function setError(sectionKey, message) {
-    const s = SECTIONS[sectionKey];
-    document.getElementById(s.feed).innerHTML = `<div class="error-state"><i class="ti ti-alert-triangle"></i>${message || 'Something went wrong. Please try again.'}</div>`;
-    setDone(sectionKey);
-  }
-
-  function renderItems(items, sectionKey) {
-    const s = SECTIONS[sectionKey];
-    const container = document.getElementById(s.feed);
-    if (!items || items.length === 0) {
-      container.innerHTML = '<div class="empty-state"><i class="ti ti-search-off"></i>No results found right now. Try again later.</div>';
+  function saveKey() {
+    const val = document.getElementById('api-input').value.trim();
+    const msg = document.getElementById('key-msg');
+    if (!val.startsWith('sk-ant-')) {
+      msg.innerHTML = '<div class="key-err"><i class="ti ti-alert-circle"></i> That doesn\'t look like a valid Anthropic API key — it should start with sk-ant-</div>';
       return;
     }
-    container.innerHTML = items.map(item => `
+    apiKey = val;
+    localStorage.setItem('gs_dash_key', apiKey);
+    document.getElementById('api-banner').style.display = 'none';
+  }
+
+  function setLoading(key) {
+    document.getElementById('feed-' + key).innerHTML = '<div class="loading-state"><i class="ti ti-loader-2" aria-hidden="true"></i>Searching the web for latest results…</div>';
+    const btn = document.getElementById('btn-' + key);
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader-2" style="font-size:12px;animation:spin 1s linear infinite"></i> Loading…';
+  }
+
+  function setDone(key) {
+    const btn = document.getElementById('btn-' + key);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ti ti-refresh"></i> Refresh';
+    document.getElementById('up-' + key).textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function renderItems(items, key) {
+    const s = SECTIONS[key];
+    const feed = document.getElementById('feed-' + key);
+    if (!items || items.length === 0) {
+      feed.innerHTML = '<div class="empty-state"><i class="ti ti-search-off" aria-hidden="true"></i>No results found right now — try again later</div>';
+      return;
+    }
+    feed.innerHTML = items.map(it => `
       <div class="feed-item">
-        <a href="${item.url || '#'}" target="_blank" rel="noopener noreferrer">${item.title || 'Untitled'}</a>
-        ${item.summary ? `<div class="feed-summary">${item.summary}</div>` : ''}
+        <a href="${it.url || '#'}" target="_blank" rel="noopener noreferrer">${it.title || 'Untitled'}</a>
+        ${it.summary ? `<div class="feed-summary">${it.summary}</div>` : ''}
         <div class="feed-tags">
-          ${s.showCountry && item.country ? `<span class="country-tag"><i class="ti ti-map-pin" style="font-size:10px;"></i>${item.country}</span>` : ''}
-          ${item.source ? `<span class="source-tag"><i class="ti ti-link" style="font-size:10px;"></i>${item.source}</span>` : ''}
-          ${item.date ? `<span class="feed-date">${item.date}</span>` : ''}
+          ${s.showCountry && it.country ? `<span class="tag tag-country"><i class="ti ti-map-pin" style="font-size:9px"></i>${it.country}</span>` : ''}
+          ${it.source ? `<span class="tag"><i class="ti ti-link" style="font-size:9px"></i>${it.source}</span>` : ''}
+          ${it.date ? `<span class="tag">${it.date}</span>` : ''}
         </div>
       </div>
     `).join('');
   }
 
-  async function fetchSection(sectionKey) {
+  async function fetchSection(key) {
     if (!apiKey) {
-      document.getElementById('api-notice').style.display = 'flex';
-      document.getElementById('api-key-input').focus();
+      document.getElementById('api-banner').style.display = 'flex';
+      document.getElementById('api-input').focus();
       return;
     }
 
-    const s = SECTIONS[sectionKey];
-    setLoading(sectionKey);
+    setLoading(key);
 
     try {
       const resp = await fetch("https://api.anthropic.com/v1/messages", {
@@ -526,28 +395,25 @@
           model: "claude-sonnet-4-6",
           max_tokens: 1000,
           tools: [{ type: "web_search_20250305", name: "web_search" }],
-          system: `You are a football intelligence assistant. Return ONLY a valid JSON array (no markdown, no preamble, no backticks) with up to 6 objects, each with:
-- "title": string (clear headline)
-- "url": string (real URL from search results)
-- "source": string (publication name)
-- "date": string (e.g. "12 Jun 2025")
-- "summary": string (max 25 words, plain English)
-- "country": string (country or league, for international results)
-Only include real results. If nothing found, return [].`,
-          messages: [{ role: "user", content: s.prompt }]
+          system: `You are a football intelligence assistant. Return ONLY a valid JSON array (no markdown, no backticks, no preamble) with up to 6 objects each with: "title" (string), "url" (real URL from search), "source" (publication name), "date" (e.g. "12 Jun 2025"), "summary" (max 20 words plain English), "country" (country or league for international results). Only real results from the web search. If nothing found, return [].`,
+          messages: [{ role: "user", content: SECTIONS[key].prompt }]
         })
       });
 
       if (!resp.ok) {
-        const err = await resp.json();
+        const err = await resp.json().catch(() => ({}));
+        const msg = err?.error?.message || '';
         if (resp.status === 401) {
-          setError(sectionKey, 'Invalid API key. Please check and re-enter it.');
+          document.getElementById('feed-' + key).innerHTML = '<div class="error-state"><i class="ti ti-alert-triangle"></i>Invalid API key. Please re-enter it.</div>';
           apiKey = '';
-          localStorage.removeItem('gs_api_key');
-          document.getElementById('api-notice').style.display = 'flex';
+          localStorage.removeItem('gs_dash_key');
+          document.getElementById('api-banner').style.display = 'flex';
+        } else if (resp.status === 402 || msg.toLowerCase().includes('credit')) {
+          document.getElementById('feed-' + key).innerHTML = '<div class="error-state"><i class="ti ti-alert-triangle"></i>Your Anthropic credit balance is too low. Top up at console.anthropic.com → Billing.</div>';
         } else {
-          setError(sectionKey, `API error: ${err.error?.message || resp.statusText}`);
+          document.getElementById('feed-' + key).innerHTML = `<div class="error-state"><i class="ti ti-alert-triangle"></i>API error (${resp.status}): ${msg || resp.statusText}</div>`;
         }
+        setDone(key);
         return;
       }
 
@@ -555,13 +421,14 @@ Only include real results. If nothing found, return [].`,
       const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
       const clean = text.replace(/```json|```/g, '').trim();
       const items = JSON.parse(clean);
-      renderItems(items, sectionKey);
-      setDone(sectionKey);
+      renderItems(items, key);
 
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-      setError(sectionKey, 'Could not connect. Check your internet connection and try again.');
+      document.getElementById('feed-' + key).innerHTML = '<div class="error-state"><i class="ti ti-alert-triangle"></i>Could not connect. Check your internet connection and try again.</div>';
     }
+
+    setDone(key);
   }
 
   checkKey();
